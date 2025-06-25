@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { Header } from '../../shared/ui/Header/Header';
 import styles from './Layout.module.css';
 import { LoginModal } from '../../shared/ui/LoginModal/LoginModal';
+import { useUserStore } from '../../shared/store/userStore';
 
 interface LayoutProps {
   children: ReactNode;
@@ -23,11 +24,12 @@ export const Layout = ({ children }: LayoutProps) => {
       },
   ];
   const [loginOpen, setLoginOpen] = useState(false);
-  const [user, setUser] = useState<null | { email: string, password: string, avatarUrl?: string }>(null);
+  const user = useUserStore((state) => state.user)
+  const setUser = useUserStore((state) => state.setUser)
 
   const handleLogin = (email: string, password: string) => {
-    setUser({ email, password});
-    setLoginOpen(false);
+      setUser({ email, password});
+      setLoginOpen(false);
   };
 
   const handleLogout = () => {

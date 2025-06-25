@@ -1,4 +1,4 @@
-import { useStore } from '../shared/store/useStore';
+import { useAssetStore } from '../shared/store/assetStore';
 import { Button } from '../shared/ui/Button/Button';
 import { Table, type Column, type TableRow } from '../shared/ui/Table/Table';
 import styles from './MainPage.module.css';
@@ -6,11 +6,15 @@ import { type CryptoCoin, fetchCryptoCoins } from '../shared/api/cryptoApi';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Dropdown } from '../shared/ui/Dropdown/Dropdown';
+import { useUserStore } from '../shared/store/userStore';
+import { Loader } from '../shared/ui/Loader/Loader';
 
 export const MainPage = () => {
-  const setLoading = useStore((state) => state.setLoading)
-  const assetList = useStore((state) => state.assetList)
-  const setAssetList = useStore((state) => state.setAssetList)
+  const user = useUserStore((state) => state.user)
+
+  const setLoading = useAssetStore((state) => state.setLoading)
+  const assetList = useAssetStore((state) => state.assetList)
+  const setAssetList = useAssetStore((state) => state.setAssetList)
 
   const { data, isSuccess, refetch, isFetching } = useQuery<CryptoCoin[], Error>({
     queryKey: ['cryptoCoins'],
@@ -51,8 +55,8 @@ export const MainPage = () => {
       width: 100,
       renderCell: () => (
         <>
-            <div className={styles.actions}>
-              <Dropdown disabled={isFetching} onBuy={() => alert('Buy') } onSell={() => alert('Sell')}/>
+            <div title={!user ? 'Please log in' : ''} className={styles.actions}>
+              <Dropdown  disabled={isFetching || !user} onBuy={() => alert('Buy') } onSell={() => alert('Sell')}/>
             </div>
         </>
       )
@@ -69,7 +73,7 @@ export const MainPage = () => {
   })) : [];
 
 
-  const [page, setPage] = useState(7)
+  const [page, setPage] = useState(1)
   const showMore = async() => {
     setLoading(true)
     await setPage(page + 1)
@@ -85,7 +89,7 @@ export const MainPage = () => {
       <Table columns={columns} rows={rowsForTable}/>
       <div className={styles.showMoreBlock}>
         {isFetching
-        ? <span className={styles.loader}></span>
+        ? <Loader/>
         : <Button onClick={showMore}>Show more</Button>
         }
       </div>

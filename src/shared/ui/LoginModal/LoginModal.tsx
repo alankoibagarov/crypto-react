@@ -1,6 +1,8 @@
-import { useState, type FC, type FormEvent } from 'react';
+import { useEffect, useState, type FC, type FormEvent } from 'react';
 import styles from './LoginModal.module.css';
 import { Button } from '../Button/Button';
+import { userList } from '../../mocks/user';
+import { Loader } from '../Loader/Loader';
 
 interface LoginModalProps {
   open: boolean;
@@ -12,6 +14,13 @@ export const LoginModal: FC<LoginModalProps> = ({ open = false, onClose, onLogin
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false)
+  const [loginError, setLoginError] = useState('')
+
+  useEffect(() => {
+    if(open) {
+        setLoginError('')
+    }
+  },[open])
 
   if (!open) return null;
 
@@ -19,13 +28,22 @@ export const LoginModal: FC<LoginModalProps> = ({ open = false, onClose, onLogin
     e.preventDefault();
 
     setLoading(true);
+    setLoginError('')
     setTimeout(() => {
-        onLogin(email, password);
-        setEmail('');
-        setPassword('');
+        if(validateUser(email, password)) {
+            onLogin(email, password);
+            setEmail('');
+            setPassword('');
+        } else {
+            setLoginError('Wrong email or password')
+        }
         setLoading(false);
     }, Math.random() * 3000);
   };
+
+  const validateUser = (email: string, password: string): boolean => {
+    return userList.some(user => user.login === email && user.password === password)
+  }
 
   return (
     <div className={styles.overlay}>
@@ -50,14 +68,24 @@ export const LoginModal: FC<LoginModalProps> = ({ open = false, onClose, onLogin
             required
           />
           <div className={styles.actions}>
-            <Button type="submit" disabled={!email || !password || loading}>
-              Log In
-            </Button>
-            <Button type="button" variant="secondary" onClick={onClose}>
+            {loading ? (
+                <Loader/>
+            ) 
+            : (
+                <Button type="submit" disabled={!email || !password || loading}>
+                Log In
+              </Button>
+            )}
+            <Button disabled={loading} type="button" variant="secondary" onClick={onClose}>
               Cancel
             </Button>
           </div>
-          {loading ? 'loading...' : ''}
+          {loginError && (
+            <p className='text-danger'>
+                {loginError}
+            </p>
+          )}
+
         </form>
       </div>
     </div>

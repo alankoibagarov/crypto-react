@@ -1,18 +1,24 @@
 import { useState, useEffect, type FC } from 'react';
 import styles from './Transfer.module.css';
-import { useStore } from '../../shared/store/useStore';
+import { useAssetStore } from '../../shared/store/assetStore';
 import { type CryptoCoin, fetchCoinList } from '../../shared/api/cryptoApi';
 import { useQuery } from '@tanstack/react-query';
+import { SwapIcon } from '../../shared/ui/Icons/SwapIcon';
+import { useUserStore } from '../../shared/store/userStore';
+import { Button } from '../../shared/ui/Button/Button';
 
 export const Transfer: FC = () => {
-  const fullAssetList = useStore((state) => state.fullAssetList);
-  const setFullAssetList = useStore((state) => state.setFullAssetList)
+  const user = useUserStore((state) => state.user)
 
-  const [fromAmount, setFromAmount] = useState<number | string>('');
+  const fullAssetList = useAssetStore((state) => state.fullAssetList);
+  const setFullAssetList = useAssetStore((state) => state.setFullAssetList)
+
+  const [fromAmount, setFromAmount] = useState<number>(1);
   const [fromCurrency, setFromCurrency] = useState<string>('');
   const [toCurrency, setToCurrency] = useState<string>('');
   const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
   const [isSwapped, setIsSwapped] = useState(false);
+  const [exchangeRate, setExchangeRate] = useState<number>(0)
 
 
   const { data, isSuccess, isFetching } = useQuery<CryptoCoin[], Error>({
@@ -22,21 +28,30 @@ export const Transfer: FC = () => {
   });
 
   useEffect(() => {
-    console.log('rendered')
-  });
-
-  useEffect(() => {
     if (isSuccess) {
-      console.log('Success:', data);
       setFullAssetList([...fullAssetList, ...data])
     }
   }, [isSuccess]);
+
+  useEffect(() => {
+    if(Number(fromAmount) < 0) {
+        setFromAmount(0)
+    }
+    const convertedAmount = Number(fromAmount) * exchangeRate
+    setConvertedAmount(convertedAmount)
+  },[fromAmount])
 
   useEffect(() => {
     if (fullAssetList.length > 0) {
       if (!fromCurrency) setFromCurrency(fullAssetList[0].id);
       if (!toCurrency && fullAssetList.length > 1) setToCurrency(fullAssetList[1].id);
     }
+    const fromCoin = fullAssetList.find(coin => coin.id === fromCurrency);
+    const toCoin = fullAssetList.find(coin => coin.id === toCurrency);
+    const exchangeRate = (fromCoin?.current_price ?? 0) / (toCoin?.current_price ?? 1)
+    setExchangeRate(exchangeRate)
+    const convertedAmount = Number(fromAmount) * exchangeRate
+    setConvertedAmount(convertedAmount)
   }, [fullAssetList, fromCurrency, toCurrency]);
 
   const handleSwap = () => {
@@ -58,6 +73,7 @@ export const Transfer: FC = () => {
     if (fromCoin && toCoin) {
       const result = (Number(fromAmount) * fromCoin.current_price) / toCoin.current_price;
       setConvertedAmount(result);
+      alert(`Converted ${fromAmount} ${fromCoin?.symbol.toUpperCase() || ''} to ${Number(convertedAmount).toLocaleString('en-US', { maximumFractionDigits: 3 })} ${toCoin?.symbol.toUpperCase() || ''}`);
     } else {
       alert('Selected currencies not found.');
       setConvertedAmount(null);
@@ -75,8 +91,17 @@ export const Transfer: FC = () => {
       <h2>Crypto Converter</h2>
 
       <div className={styles.conversionSection}>
-        <label htmlFor="fromAmount">Amount</label>
+        <label htmlFor="fromAmount">From</label>
         <div className={styles.inputGroup}>
+          <select
+            id='fromCurrency'
+            value={fromCurrency}
+            onChange={e => setFromCurrency(e.target.value)}
+            disabled={!fullAssetList.length || isFetching || !user}
+          >
+            <option value="">Select</option>
+            {availableCurrencies('fromCurrency')}
+          </select>
           <input
             id="fromAmount"
             type="number"
@@ -84,60 +109,55 @@ export const Transfer: FC = () => {
             onChange={e => setFromAmount(Number(e.target.value))}
             placeholder="Enter amount"
             step="any"
-            disabled={isFetching}
+            disabled={isFetching || !user}
           />
-          <select
-            id='fromCurrency'
-            value={fromCurrency}
-            onChange={e => setFromCurrency(e.target.value)}
-            disabled={!fullAssetList.length || isFetching}
-          >
-            <option value="">Select</option>
-            {availableCurrencies('fromCurrency')}
-          </select>
         </div>
       </div>
 
       <div className={styles.swapButtonContainer}>
-        <button className={styles.swapButton} onClick={handleSwap}>
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M6.25 15.75l-3.5-3.5 3.5-3.5M2.75 12h17.5M17.75 8.25l3.5 3.5-3.5 3.5"></path>
-          </svg>
+        <button disabled={!user} className={styles.swapButton} onClick={handleSwap}>
+          <SwapIcon/>
         </button>
       </div>
 
       <div className={styles.conversionSection}>
         <label htmlFor="toCurrency">To</label>
         <div className={styles.inputGroup}>
-          <input
-            id="toAmount"
-            type="text"
-            value={convertedAmount !== null ? convertedAmount.toLocaleString(undefined, { maximumFractionDigits: 6 }) : ''}
-            readOnly
-            placeholder="Converted amount"
-            disabled={isFetching}
-          />
           <select
             id='toCurrency'
             value={toCurrency}
             onChange={e => setToCurrency(e.target.value)}
-            disabled={!fullAssetList.length || isFetching}
+            disabled={!fullAssetList.length || isFetching || !user}
           >
             <option value="">Select</option>
             {availableCurrencies('toCurrency')}
           </select>
+          <input
+            id="toAmount"
+            type="text"
+            value={convertedAmount !== null ? convertedAmount.toLocaleString(undefined, { maximumFractionDigits: 3 }) : ''}
+            readOnly
+            placeholder="Converted amount"
+            disabled={isFetching || !user}
+          />
         </div>
       </div>
 
-      <button className={styles.convertButton} onClick={handleConvert}>
+      <Button className={styles.convertButton} disabled={!user} onClick={handleConvert}>
         Convert
-      </button>
+      </Button>
 
       {convertedAmount !== null && (
         <p className={styles.result}>
           {fromAmount} {fullAssetList.find(c => c.id === fromCurrency)?.symbol.toUpperCase() || ''} is{' '}
-          {convertedAmount.toLocaleString(undefined, { maximumFractionDigits: 6 })}{' '}
+          {convertedAmount.toLocaleString('en-US', { maximumFractionDigits: 3 })}{' '}
           {fullAssetList.find(c => c.id === toCurrency)?.symbol.toUpperCase() || ''}
+        </p>
+      )}
+
+      {!user && (
+        <p className={styles.disabled}>
+            Functionality is disabled. Please, log in to use it
         </p>
       )}
     </div>

@@ -6,7 +6,7 @@
   border-radius: 1rem;
   background: #fff;
   box-shadow: 0 2px 16px 0 rgba(0,0,0,0.04);
-  max-width: 30rem;
+  max-width: 40rem;
   margin: 2rem auto;
 }
 
@@ -42,6 +42,7 @@
   font-size: inherit;
   color: var(--color-text);
   cursor: pointer;
+  max-width: 50%;
 }
 
 .swapButtonContainer {
@@ -68,7 +69,7 @@
 
 .swapButton:hover {
   background: #4f46e5;
-  transform: rotate(90deg);
+  /* transform: rotate(90deg); */
 }
 
 .swapButton svg {
@@ -100,3 +101,11 @@
   font-weight: 500;
   margin-top: 1rem;
 } 
+
+.disabled {
+    text-align: center;
+    font-size: 1rem;
+    color: var(--color-danger);
+    font-weight: 500;
+    margin-top: 1rem;
+}

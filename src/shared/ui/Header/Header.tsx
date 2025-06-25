@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../Button/Button";
 import styles from './Header.module.css';
 import userImg from '../../../assets/user.png'
+import logoImg from '../../../assets/blockchain.png'
 
 export const Header = (
         {
@@ -23,6 +24,7 @@ export const Header = (
     return (
         <header className={styles.header}>
         <div className={styles.header__container}>
+          <img className={styles.logo} src={logoImg} alt="logo" />
           <span className={styles.header__title}>
             React Crypto App
           </span>

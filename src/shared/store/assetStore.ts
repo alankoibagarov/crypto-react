@@ -10,7 +10,7 @@ interface AppState {
   setFullAssetList: (assets: CryptoCoin[]) => void;
 }
 
-export const useStore = create<AppState>((set) => ({
+export const useAssetStore = create<AppState>((set) => ({
   isLoading: false,
   setLoading: (loading) => set({ isLoading: loading }),
   assetList: [],
