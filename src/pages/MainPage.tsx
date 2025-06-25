@@ -8,9 +8,11 @@ import { useEffect, useState } from 'react';
 import { Dropdown } from '../shared/ui/Dropdown/Dropdown';
 import { useUserStore } from '../shared/store/userStore';
 import { Loader } from '../shared/ui/Loader/Loader';
+import { useToast } from '../shared/ui/Toast/Toast';
 
 export const MainPage = () => {
   const user = useUserStore((state) => state.user)
+  const toast = useToast()
 
   const setLoading = useAssetStore((state) => state.setLoading)
   const assetList = useAssetStore((state) => state.assetList)
@@ -24,7 +26,6 @@ export const MainPage = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      console.log('Success:', data);
       setAssetList([...assetList, ...data])
     }
   }, [isSuccess, data, setAssetList]);
@@ -53,10 +54,14 @@ export const MainPage = () => {
       name: '',
       key: 'actions',
       width: 100,
-      renderCell: () => (
+      renderCell: (_, row: TableRow) => (
         <>
             <div title={!user ? 'Please log in' : ''} className={styles.actions}>
-              <Dropdown  disabled={isFetching || !user} onBuy={() => alert('Buy') } onSell={() => alert('Sell')}/>
+              <Dropdown  
+                disabled={isFetching || !user} 
+                  onBuy={() => toast.success(`Bought 1 ${row.name} for ${row.current_price?.toLocaleString('en-US', { maximumFractionDigits: 3 })}$`) }
+                  onSell={() => toast.success(`Sold 1 ${row.name} for ${row.current_price?.toLocaleString('en-US', { maximumFractionDigits: 3 })}$`)}
+                />
             </div>
         </>
       )

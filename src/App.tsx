@@ -4,6 +4,7 @@ import { MainPage } from './pages/MainPage';
 import { TradePage } from './pages/TradePage';
 import { queryClient } from './shared/api/queryClient';
 import { HashRouter, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from './shared/ui/Toast/Toast';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
             <Route path="/trade" element={<TradePage />} />
           </Routes>
         </Layout>
+        <ToastContainer />
       </HashRouter>
     </QueryClientProvider>
   );

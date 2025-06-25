@@ -5,12 +5,14 @@ import { Header } from '../../shared/ui/Header/Header';
 import styles from './Layout.module.css';
 import { LoginModal } from '../../shared/ui/LoginModal/LoginModal';
 import { useUserStore } from '../../shared/store/userStore';
+import { useToast } from '../../shared/ui/Toast/Toast';
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export const Layout = ({ children }: LayoutProps) => {
+  const toast = useToast();
   const location = useLocation();
   const tab = location.pathname === '/trade' ? 1 : 0;
   const tabs = [
@@ -30,12 +32,14 @@ export const Layout = ({ children }: LayoutProps) => {
   const handleLogin = (email: string, password: string) => {
       setUser({ email, password});
       setLoginOpen(false);
+      toast.success('Logged in')
   };
 
   const handleLogout = () => {
     if(confirm('Do you really want to logout?')) {
       setUser(null);
       setLoginOpen(false);
+      toast.success('Logged out')
     }
   };
 
