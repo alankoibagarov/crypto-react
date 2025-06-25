@@ -1,8 +1,23 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "../Button/Button";
 import styles from './Header.module.css';
+import userImg from '../../../assets/user.png'
 
-export const Header = ({tabs, tab, user, setLoginOpen}: {tabs: {label: string, path: string}[], tab: number, user: {email: string} | null, setLoginOpen: (open: boolean) => void}) => {
+export const Header = (
+        {
+            tabs, 
+            tab, 
+            user, 
+            setLoginOpen,
+            onLogout
+        }: {
+            tabs: {label: string, path: string}[],
+            tab: number, 
+            user: {email: string, avatarUrl?: string} | null, 
+            setLoginOpen: (open: boolean) => void,
+            onLogout: () => void
+        }
+        ) => {
     const navigate = useNavigate();
     
     return (
@@ -24,9 +39,15 @@ export const Header = ({tabs, tab, user, setLoginOpen}: {tabs: {label: string, p
             ))}
           </nav>
         </div>
-        <div>
+        <div className={styles.header__container}>
           {user ? (
+            <>
+            <img className={styles.avatar} src={user.avatarUrl || userImg} alt="avatar"  />
             <span className="font-medium">{user.email}</span>
+            <Button onClick={() => onLogout()}>
+                Log out
+            </Button>
+            </>
           ) : (
             <Button onClick={() => setLoginOpen(true)}>
               Log In

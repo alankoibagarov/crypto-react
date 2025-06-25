@@ -27,7 +27,7 @@
 }
 
 .secondary:hover:not(:disabled) {
-  background: #e07c1b;
+  background: var(--color-secondary-hover);
 } 
 
 .active {
@@ -36,5 +36,23 @@
 }
 
 .active:hover:not(:disabled) {
-  background: #4f46e5;
+  background: var(--color-primary-hover);
 }
+
+.success {
+ background: var(--color-success);
+ color: #fff;
+}
+
+.success:hover:not(:disabled) {
+ background: var(--color-success-hover);    
+} 
+
+.danger {
+ background: var(--color-danger);
+ color: #fff;
+} 
+
+.danger:hover:not(:disabled) {
+ background: var(--color-danger-hover);    
+} 

@@ -1,0 +1,102 @@
+.transferContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.04);
+  max-width: 30rem;
+  margin: 2rem auto;
+}
+
+.conversionSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.inputGroup {
+  display: flex;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  font-size: 1.125rem;
+}
+
+.inputGroup input {
+  flex-grow: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  outline: none;
+  font-size: inherit;
+  color: var(--color-text);
+}
+
+.inputGroup select {
+  padding: 0.75rem 1rem;
+  border: none;
+  outline: none;
+  background: #f3f4f6;
+  font-size: inherit;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.swapButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin: -0.75rem 0; /* Adjust to visually overlap */
+  z-index: 10;
+}
+
+.swapButton {
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.swapButton:hover {
+  background: #4f46e5;
+  transform: rotate(90deg);
+}
+
+.swapButton svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.convertButton {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.convertButton:hover {
+  background: #4f46e5;
+}
+
+.result {
+  text-align: center;
+  font-size: 1rem;
+  color: var(--color-text);
+  font-weight: 500;
+  margin-top: 1rem;
+} 
