@@ -30,7 +30,7 @@ export const MainPage = () => {
       name: 'Icon',
       key: 'image',
       width: 40,
-      renderCell: (value, row) => (
+      renderCell: (_, row) => (
         <img className={styles.icon} src={String(row.image)} alt="Icon"/>
       )
     },
@@ -41,7 +41,7 @@ export const MainPage = () => {
     {
       name: 'Price (USD)',
       key: 'current_price',
-      renderCell: (value, row) => (
+      renderCell: (_, row) => (
         row.current_price?.toLocaleString('en-US', { maximumFractionDigits: 3 })
       )
     },
@@ -49,10 +49,10 @@ export const MainPage = () => {
       name: '',
       key: 'actions',
       width: 100,
-      renderCell: (value, row, rowIndex) => (
+      renderCell: () => (
         <>
             <div className={styles.actions}>
-              <Dropdown disabled={isFetching} onBuy={() => alert('Buy' + rowIndex) } onSell={() => alert('Sell' + rowIndex)}/>
+              <Dropdown disabled={isFetching} onBuy={() => alert('Buy') } onSell={() => alert('Sell')}/>
             </div>
         </>
       )
@@ -69,7 +69,7 @@ export const MainPage = () => {
   })) : [];
 
 
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(7)
   const showMore = async() => {
     setLoading(true)
     await setPage(page + 1)

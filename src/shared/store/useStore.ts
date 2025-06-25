@@ -6,6 +6,8 @@ interface AppState {
   setLoading: (loading: boolean) => void;
   assetList: CryptoCoin[];
   setAssetList: (assets: CryptoCoin[]) => void;
+  fullAssetList: CryptoCoin[];
+  setFullAssetList: (assets: CryptoCoin[]) => void;
 }
 
 export const useStore = create<AppState>((set) => ({
@@ -13,4 +15,6 @@ export const useStore = create<AppState>((set) => ({
   setLoading: (loading) => set({ isLoading: loading }),
   assetList: [],
   setAssetList: (assets) => set({ assetList: assets }),
+  fullAssetList: [],
+  setFullAssetList: (assets) => set({ fullAssetList: assets }),
 })); 

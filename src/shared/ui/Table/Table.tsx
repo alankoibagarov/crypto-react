@@ -1,4 +1,3 @@
-import { Button } from '../Button/Button';
 import styles from './Table.module.css'
 
 export interface Column {

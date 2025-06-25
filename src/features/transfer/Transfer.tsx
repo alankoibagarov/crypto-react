@@ -1,12 +1,12 @@
 import { useState, useEffect, type FC } from 'react';
 import styles from './Transfer.module.css';
 import { useStore } from '../../shared/store/useStore';
-import { type CryptoCoin } from '../../shared/api/cryptoApi';
-
-const selectAssetList = (state: { assetList: CryptoCoin[] }) => state.assetList;
+import { type CryptoCoin, fetchCoinList } from '../../shared/api/cryptoApi';
+import { useQuery } from '@tanstack/react-query';
 
 export const Transfer: FC = () => {
-  const assetList = useStore(selectAssetList);
+  const fullAssetList = useStore((state) => state.fullAssetList);
+  const setFullAssetList = useStore((state) => state.setFullAssetList)
 
   const [fromAmount, setFromAmount] = useState<number | string>('');
   const [fromCurrency, setFromCurrency] = useState<string>('');
@@ -14,12 +14,30 @@ export const Transfer: FC = () => {
   const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
   const [isSwapped, setIsSwapped] = useState(false);
 
+
+  const { data, isSuccess, isFetching } = useQuery<CryptoCoin[], Error>({
+    queryKey: ['fullCoinList'],
+    queryFn: fetchCoinList,
+    staleTime: 5 * 60 * 1000,
+  });
+
   useEffect(() => {
-    if (assetList.length > 0) {
-      if (!fromCurrency) setFromCurrency(assetList[0].id);
-      if (!toCurrency && assetList.length > 1) setToCurrency(assetList[1].id);
+    console.log('rendered')
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      console.log('Success:', data);
+      setFullAssetList([...fullAssetList, ...data])
     }
-  }, [assetList, fromCurrency, toCurrency]);
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (fullAssetList.length > 0) {
+      if (!fromCurrency) setFromCurrency(fullAssetList[0].id);
+      if (!toCurrency && fullAssetList.length > 1) setToCurrency(fullAssetList[1].id);
+    }
+  }, [fullAssetList, fromCurrency, toCurrency]);
 
   const handleSwap = () => {
     setIsSwapped(!isSwapped);
@@ -34,8 +52,8 @@ export const Transfer: FC = () => {
       return;
     }
 
-    const fromCoin = assetList.find(coin => coin.id === fromCurrency);
-    const toCoin = assetList.find(coin => coin.id === toCurrency);
+    const fromCoin = fullAssetList.find(coin => coin.id === fromCurrency);
+    const toCoin = fullAssetList.find(coin => coin.id === toCurrency);
 
     if (fromCoin && toCoin) {
       const result = (Number(fromAmount) * fromCoin.current_price) / toCoin.current_price;
@@ -46,7 +64,7 @@ export const Transfer: FC = () => {
     }
   };
 
-  const availableCurrencies = (uniqueId: number | string) => assetList.map((coin, index) => (
+  const availableCurrencies = (uniqueId: number | string) => fullAssetList.map((coin, index) => (
     <option key={`${uniqueId}-${coin.id}-${index}`} value={coin.id}>
       {coin.name} ({coin.symbol.toUpperCase()})
     </option>
@@ -66,12 +84,13 @@ export const Transfer: FC = () => {
             onChange={e => setFromAmount(Number(e.target.value))}
             placeholder="Enter amount"
             step="any"
+            disabled={isFetching}
           />
           <select
             id='fromCurrency'
             value={fromCurrency}
             onChange={e => setFromCurrency(e.target.value)}
-            disabled={!assetList.length}
+            disabled={!fullAssetList.length || isFetching}
           >
             <option value="">Select</option>
             {availableCurrencies('fromCurrency')}
@@ -96,12 +115,13 @@ export const Transfer: FC = () => {
             value={convertedAmount !== null ? convertedAmount.toLocaleString(undefined, { maximumFractionDigits: 6 }) : ''}
             readOnly
             placeholder="Converted amount"
+            disabled={isFetching}
           />
           <select
             id='toCurrency'
             value={toCurrency}
             onChange={e => setToCurrency(e.target.value)}
-            disabled={!assetList.length}
+            disabled={!fullAssetList.length || isFetching}
           >
             <option value="">Select</option>
             {availableCurrencies('toCurrency')}
@@ -115,9 +135,9 @@ export const Transfer: FC = () => {
 
       {convertedAmount !== null && (
         <p className={styles.result}>
-          {fromAmount} {assetList.find(c => c.id === fromCurrency)?.symbol.toUpperCase() || ''} is{' '}
+          {fromAmount} {fullAssetList.find(c => c.id === fromCurrency)?.symbol.toUpperCase() || ''} is{' '}
           {convertedAmount.toLocaleString(undefined, { maximumFractionDigits: 6 })}{' '}
-          {assetList.find(c => c.id === toCurrency)?.symbol.toUpperCase() || ''}
+          {fullAssetList.find(c => c.id === toCurrency)?.symbol.toUpperCase() || ''}
         </p>
       )}
     </div>
