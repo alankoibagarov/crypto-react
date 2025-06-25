@@ -1,7 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+/* Tailwind removed */
 :root {
   --color-primary: #6366f1;
   --color-secondary: #f59e42;
@@ -14,9 +11,7 @@ body {
   font-family: var(--font-main);
   background: var(--color-bg);
   color: var(--color-text);
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
