@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { SwapIcon } from '../../shared/ui/Icons/SwapIcon';
 import { useUserStore } from '../../shared/store/userStore';
 import { Button } from '../../shared/ui/Button/Button';
-import { useToast } from '../../shared/ui/Toast/useToastStore';
+import { useToast } from '../../shared/store/useToastStore';
 
 export const Transfer: FC = () => {
   const user = useUserStore((state) => state.user);
@@ -16,11 +16,10 @@ export const Transfer: FC = () => {
   const toast = useToast();
 
   const [fromAmount, setFromAmount] = useState<number>(1);
-  const [fromCurrency, setFromCurrency] = useState<string>('');
-  const [toCurrency, setToCurrency] = useState<string>('');
   const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
   const [isSwapped, setIsSwapped] = useState(false);
   const [exchangeRate, setExchangeRate] = useState<number>(0);
+  const [currency, setCurrency] = useState('');
 
   const { data, isSuccess, isFetching, isError } = useQuery<
     CryptoCoin[],
@@ -54,47 +53,34 @@ export const Transfer: FC = () => {
 
   useEffect(() => {
     if (fullAssetList.length > 0) {
-      if (!fromCurrency) setFromCurrency(fullAssetList[0].id);
-      if (!toCurrency && fullAssetList.length > 1)
-        setToCurrency(fullAssetList[1].id);
+      if (!currency) setCurrency(fullAssetList[0].id);
     }
-    const fromCoin = fullAssetList.find((coin) => coin.id === fromCurrency);
-    const toCoin = fullAssetList.find((coin) => coin.id === toCurrency);
-    const exchangeRate =
-      (fromCoin?.current_price ?? 0) / (toCoin?.current_price ?? 1);
+    const fromCoin = fullAssetList.find((coin) => coin.id === currency);
+
+    const exchangeRate = fromCoin?.current_price ?? 0;
     setExchangeRate(exchangeRate);
     const convertedAmount = Number(fromAmount) * exchangeRate;
     setConvertedAmount(convertedAmount);
-  }, [fullAssetList, fromCurrency, toCurrency]);
+  }, [fullAssetList, currency]);
 
   const handleSwap = () => {
     setIsSwapped(!isSwapped);
-    setFromCurrency(toCurrency);
-    setToCurrency(fromCurrency);
-    setConvertedAmount(null);
   };
 
   const handleConvert = () => {
-    if (
-      !fromAmount ||
-      Number(fromAmount) <= 0 ||
-      !fromCurrency ||
-      !toCurrency
-    ) {
-      toast.error('Please enter a valid amount and select both currencies.');
+    if (!fromAmount || Number(fromAmount) <= 0 || !currency) {
+      toast.error('Please enter a valid amount and select currency');
       return;
     }
 
-    const fromCoin = fullAssetList.find((coin) => coin.id === fromCurrency);
-    const toCoin = fullAssetList.find((coin) => coin.id === toCurrency);
+    const fromCoin = fullAssetList.find((coin) => coin.id === currency);
 
-    if (fromCoin && toCoin) {
-      const result =
-        (Number(fromAmount) * fromCoin.current_price) / toCoin.current_price;
+    if (fromCoin) {
+      const result = Number(fromAmount) * fromCoin.current_price;
       setConvertedAmount(result);
 
       toast.success(
-        `Successfully converted ${fromAmount} ${fromCoin.symbol.toUpperCase()} to ${result.toFixed(6)} ${toCoin.symbol.toUpperCase()}`
+        `Successfully converted ${fromAmount} ${fromCoin.symbol.toUpperCase()} to ${result.toFixed(6)} USD`
       );
     } else {
       toast.error('Selected currencies not found.');
@@ -102,29 +88,21 @@ export const Transfer: FC = () => {
     }
   };
 
-  const availableCurrencies = (uniqueId: number | string) =>
-    fullAssetList.map((coin, index) => (
-      <option key={`${uniqueId}-${coin.id}-${index}`} value={coin.id}>
-        {coin.name} ({coin.symbol.toUpperCase()})
-      </option>
-    ));
+  const availableCurrencies = fullAssetList.map((coin, index) => (
+    <option key={`${coin.id}-${index}`} value={coin.id}>
+      {coin.name} ({coin.symbol.toUpperCase()})
+    </option>
+  ));
 
   return (
     <div className={styles.transferContainer}>
       <h2>Crypto Converter</h2>
 
       <div className={styles.conversionSection}>
-        <label htmlFor="fromAmount">From</label>
+        <label htmlFor="fromAmount">
+          {isSwapped ? 'USD' : 'Cryptocurrency'}
+        </label>
         <div className={styles.inputGroup}>
-          <select
-            id="fromCurrency"
-            value={fromCurrency}
-            onChange={(e) => setFromCurrency(e.target.value)}
-            disabled={!fullAssetList.length || isFetching || !user}
-          >
-            <option value="">Select</option>
-            {availableCurrencies('fromCurrency')}
-          </select>
           <input
             id="fromAmount"
             type="number"
@@ -134,6 +112,15 @@ export const Transfer: FC = () => {
             step="any"
             disabled={isFetching || !user}
           />
+          <select
+            id="fromCurrency"
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value)}
+            disabled={!fullAssetList.length || isFetching || !user}
+          >
+            <option value="">Select</option>
+            {availableCurrencies}
+          </select>
         </div>
       </div>
 
@@ -148,26 +135,34 @@ export const Transfer: FC = () => {
       </div>
 
       <div className={styles.conversionSection}>
-        <label htmlFor="toCurrency">To</label>
+        <label htmlFor="toCurrency">
+          {isSwapped ? 'Cryptocurrency' : 'USD'}
+        </label>
         <div className={styles.inputGroup}>
-          <select
-            id="toCurrency"
-            value={toCurrency}
-            onChange={(e) => setToCurrency(e.target.value)}
-            disabled={!fullAssetList.length || isFetching || !user}
-          >
-            <option value="">Select</option>
-            {availableCurrencies('toCurrency')}
-          </select>
+          <div className={styles.conversionRate}>
+            Conversion rate:{' '}
+            {isSwapped
+              ? (1 / exchangeRate).toLocaleString('en-US', {
+                  maximumFractionDigits: 9,
+                })
+              : exchangeRate.toLocaleString('en-US', {
+                  maximumFractionDigits: 9,
+                })}
+          </div>
           <input
             id="toAmount"
             type="text"
             value={
-              convertedAmount !== null
-                ? convertedAmount.toLocaleString(undefined, {
+              isSwapped
+                ? ((convertedAmount ?? 1) / exchangeRate).toLocaleString(
+                    'en-US',
+                    {
+                      maximumFractionDigits: 6,
+                    }
+                  )
+                : convertedAmount?.toLocaleString('en-US', {
                     maximumFractionDigits: 6,
                   })
-                : ''
             }
             readOnly
             placeholder="Converted amount"
@@ -179,22 +174,6 @@ export const Transfer: FC = () => {
       <Button variant={'primary'} disabled={!user} onClick={handleConvert}>
         Convert
       </Button>
-
-      {convertedAmount !== null && (
-        <p className={styles.result}>
-          {fromAmount}{' '}
-          {fullAssetList
-            .find((c) => c.id === fromCurrency)
-            ?.symbol.toUpperCase() || ''}{' '}
-          is{' '}
-          {convertedAmount.toLocaleString('en-US', {
-            maximumFractionDigits: 6,
-          })}{' '}
-          {fullAssetList
-            .find((c) => c.id === toCurrency)
-            ?.symbol.toUpperCase() || ''}
-        </p>
-      )}
 
       {!user && (
         <p className={styles.disabled}>

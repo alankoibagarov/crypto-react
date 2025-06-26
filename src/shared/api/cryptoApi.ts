@@ -3,7 +3,7 @@ import axios from 'axios';
 const cryptoApi = axios.create({
   baseURL: 'https://api.coingecko.com/api/v3',
   headers: {
-    'x-cg-demo-api-key': 'CG-dtBxjoHCDo6dZAhrqrUK3tm2',
+    'x-cg-demo-api-key': 'CG-LZHeV2ipG3V5mQGuUqbLAA48',
   },
 });
 
@@ -25,7 +25,7 @@ export interface CoinListItem {
 export const fetchCryptoCoins = async (
   page: number = 1
 ): Promise<CryptoCoin[]> => {
-  const response = await cryptoApi.get('/coins/markets', {
+  const response = await cryptoApi.get('/coins/marketsz', {
     params: {
       vs_currency: 'usd',
       order: 'market_cap_desc',
@@ -38,7 +38,7 @@ export const fetchCryptoCoins = async (
 };
 
 export const fetchCoinList = async (): Promise<CryptoCoin[]> => {
-  const response = await cryptoApi.get('/coins/markets', {
+  const response = await cryptoApi.get('/coins/marketsz', {
     params: {
       vs_currency: 'usd',
       order: 'market_cap_desc',

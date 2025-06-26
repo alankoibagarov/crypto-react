@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../Button/Button';
 import styles from './Header.module.css';
 import userImg from '../../../assets/user.png';
@@ -22,7 +22,9 @@ export const Header = ({
   return (
     <header className={styles.header}>
       <div className={styles.headerContainer}>
-        <img className={styles.logo} src={logoImg} alt="logo" />
+        <Link className={styles.homeLink} to="/">
+          <img className={styles.logo} src={logoImg} alt="logo" />
+        </Link>
         <span className={styles.headerTitle}>React Crypto App</span>
         <nav className={styles.headerNav}>
           {tabs.map((tabItem, index) => (

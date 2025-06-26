@@ -5,7 +5,11 @@ import { ErrorIcon } from '../Icons/ErrorIcon';
 import { WarningIcon } from '../Icons/WarningIcon';
 import { InfoIcon } from '../Icons/InfoIcon';
 import { CloseIcon } from '../Icons/CloseIcon';
-import { useToastStore, type ToastType, type Toast } from './useToastStore';
+import {
+  useToastStore,
+  type ToastType,
+  type Toast,
+} from '../../store/useToastStore';
 
 const ToastIcon: FC<{ type: ToastType }> = ({ type }) => {
   switch (type) {

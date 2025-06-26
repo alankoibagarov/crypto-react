@@ -5,7 +5,8 @@ import { Header } from '../../shared/ui/Header/Header';
 import styles from './Layout.module.css';
 import { LoginModal } from '../../shared/ui/LoginModal/LoginModal';
 import { useUserStore } from '../../shared/store/userStore';
-import { useToast } from '../../shared/ui/Toast/useToastStore';
+import { useToast } from '../../shared/store/useToastStore';
+import { useLoginModalStore } from '../../shared/store/loginModalStore';
 
 interface LayoutProps {
   children: ReactNode;
@@ -25,20 +26,21 @@ export const Layout = ({ children }: LayoutProps) => {
       path: '/trade',
     },
   ];
-  const [loginOpen, setLoginOpen] = useState(false);
+
+  const { setModalOpen } = useLoginModalStore();
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
 
   const handleLogin = (email: string, password: string) => {
     setUser({ email, password });
-    setLoginOpen(false);
+    setModalOpen(false);
     toast.success('Logged in');
   };
 
   const handleLogout = () => {
     if (confirm('Do you really want to logout?')) {
       setUser(null);
-      setLoginOpen(false);
+      setModalOpen(false);
       toast.success('Logged out');
     }
   };
@@ -49,15 +51,11 @@ export const Layout = ({ children }: LayoutProps) => {
         tabs={tabs}
         tab={tab}
         user={user}
-        setLoginOpen={setLoginOpen}
+        setLoginOpen={setModalOpen}
         onLogout={handleLogout}
       />
       <main className={styles.main}>{children}</main>
-      <LoginModal
-        open={loginOpen}
-        onClose={() => setLoginOpen(false)}
-        onLogin={handleLogin}
-      />
+      <LoginModal onClose={() => setModalOpen(false)} onLogin={handleLogin} />
     </div>
   );
 };

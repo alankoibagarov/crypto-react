@@ -1,32 +1,29 @@
 import { useEffect, useState, type FC, type FormEvent } from 'react';
 import styles from './LoginModal.module.css';
 import { Button } from '../Button/Button';
-import { userList } from '../../mocks/user';
+import { userList } from '../../../const/user';
 import { Loader } from '../Loader/Loader';
+import { useLoginModalStore } from '../../store/loginModalStore';
 
 interface LoginModalProps {
-  open: boolean;
   onClose: () => void;
   onLogin: (email: string, password: string) => void;
 }
 
-export const LoginModal: FC<LoginModalProps> = ({
-  open = false,
-  onClose,
-  onLogin,
-}) => {
+export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const { isModalOpen } = useLoginModalStore();
 
   useEffect(() => {
-    if (open) {
+    if (isModalOpen) {
       setLoginError('');
     }
-  }, [open]);
+  }, [isModalOpen]);
 
-  if (!open) return null;
+  if (!isModalOpen) return null;
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();

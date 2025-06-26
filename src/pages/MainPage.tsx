@@ -8,7 +8,13 @@ import { useEffect, useState } from 'react';
 import { Dropdown } from '../shared/ui/Dropdown/Dropdown';
 import { useUserStore } from '../shared/store/userStore';
 import { Loader } from '../shared/ui/Loader/Loader';
-import { useToast } from '../shared/ui/Toast/useToastStore';
+import { useToast } from '../shared/store/useToastStore';
+import { useLoginModalStore } from '../shared/store/loginModalStore';
+
+enum Action {
+  BUY = 'BUY',
+  SELL = 'SELL',
+}
 
 export const MainPage = () => {
   const user = useUserStore((state) => state.user);
@@ -17,6 +23,8 @@ export const MainPage = () => {
   const setLoading = useAssetStore((state) => state.setLoading);
   const assetList = useAssetStore((state) => state.assetList);
   const setAssetList = useAssetStore((state) => state.setAssetList);
+
+  const { setModalOpen } = useLoginModalStore();
 
   const { data, isSuccess, refetch, isFetching, isError } = useQuery<
     CryptoCoin[],
@@ -51,6 +59,7 @@ export const MainPage = () => {
     {
       name: 'Name',
       key: 'name',
+      sortable: true,
     },
     {
       name: 'Price (USD)',
@@ -59,26 +68,19 @@ export const MainPage = () => {
         row.current_price?.toLocaleString('en-US', {
           maximumFractionDigits: 3,
         }),
+      sortable: true,
     },
     {
       name: '',
       key: 'actions',
       width: 100,
-      renderCell: (_, row: TableRow) => (
+      renderCell: () => (
         <>
           <div title={!user ? 'Please log in' : ''} className={styles.actions}>
             <Dropdown
-              disabled={isFetching || !user}
-              onBuy={() =>
-                toast.success(
-                  `Bought 1 ${row.name} for ${row.current_price?.toLocaleString('en-US', { maximumFractionDigits: 3 })}$`
-                )
-              }
-              onSell={() =>
-                toast.success(
-                  `Sold 1 ${row.name} for ${row.current_price?.toLocaleString('en-US', { maximumFractionDigits: 3 })}$`
-                )
-              }
+              disabled={isFetching}
+              onBuy={() => handleBuySellAction(Action.BUY)}
+              onSell={() => handleBuySellAction(Action.SELL)}
             />
           </div>
         </>
@@ -103,6 +105,16 @@ export const MainPage = () => {
     await setPage(page + 1);
     await refetch();
     setLoading(false);
+  };
+
+  const handleBuySellAction = (action: Action) => {
+    if (!user) {
+      setModalOpen(true);
+      return;
+    }
+
+    const actionText = action === Action.BUY ? 'Buy' : 'Sell';
+    toast.success(`${actionText} button is clicked`);
   };
 
   return (

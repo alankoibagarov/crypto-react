@@ -3,7 +3,6 @@
   border-collapse: collapse;
   background: #fff;
   border-radius: 0.5rem;
-  overflow: hidden;
   box-shadow: 0 2px 16px 0 rgba(30, 41, 59, 0.06);
 }
 
@@ -25,6 +24,11 @@
   font-weight: 600;
   font-size: 1rem;
   letter-spacing: 0.02em;
+  position: sticky;
+  top: calc(var(--header-height) + 2px);
+  background: white;
+  z-index: 100;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
 }
 
 .td {
@@ -34,4 +38,14 @@
 
 .tr:nth-child(even) .td {
   background: #f3f4f6;
+}
+
+.sortImg {
+  width: 14px;
+  height: 14px;
+  margin-left: 0.25rem;
+}
+
+.sortable {
+  cursor: pointer;
 }
