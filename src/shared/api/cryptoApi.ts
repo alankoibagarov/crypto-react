@@ -3,7 +3,7 @@ import axios from 'axios';
 const cryptoApi = axios.create({
   baseURL: 'https://api.coingecko.com/api/v3',
   headers: {
-    'x-cg-demo-api-key': 'CG-LZHeV2ipG3V5mQGuUqbLAA48',
+    'x-cg-demo-api-key': import.meta.env.VITE_CRYPTO_API_KEY,
   },
 });
 

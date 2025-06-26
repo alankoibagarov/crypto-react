@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import CryptoJS from 'crypto-js';
 
 interface User {
   email: string;
-  password: string;
   avatarUrl?: string;
 }
 
@@ -11,6 +11,8 @@ interface UserState {
   user: null | User;
   setUser: (user: null | User) => void;
 }
+
+const key = import.meta.env.VITE_ENCRYPTION_KEY;
 
 export const useUserStore = create<UserState>()(
   persist(
@@ -25,8 +27,9 @@ export const useUserStore = create<UserState>()(
           const encoded = localStorage.getItem(name);
           if (!encoded) return null;
           try {
-            const decoded = atob(encoded);
-            return JSON.parse(decoded);
+            const decoded = CryptoJS.AES.decrypt(encoded, key);
+            const decrypted = decoded.toString(CryptoJS.enc.Utf8);
+            return JSON.parse(decrypted);
           } catch (e) {
             console.error('Failed to decode state:', e);
             return null;
@@ -34,7 +37,8 @@ export const useUserStore = create<UserState>()(
         },
         setItem: (name, value) => {
           const json = JSON.stringify(value);
-          const encoded = btoa(json);
+          CryptoJS.AES.encrypt('123456', key).toString();
+          const encoded = CryptoJS.AES.encrypt(json, key).toString();
           localStorage.setItem(name, encoded);
         },
         removeItem: (name) => localStorage.removeItem(name),

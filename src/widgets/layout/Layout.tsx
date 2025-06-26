@@ -31,12 +31,8 @@ export const Layout = ({ children }: LayoutProps) => {
   const setUser = useUserStore((state) => state.setUser);
   const navigate = useNavigate();
 
-  const handleLogin = async (
-    email: string,
-    password: string,
-    redirectLocation?: string
-  ) => {
-    await setUser({ email, password });
+  const handleLogin = async (email: string, redirectLocation?: string) => {
+    await setUser({ email });
     await setModalOpen(false);
     toast.success('Logged in');
 

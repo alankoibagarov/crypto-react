@@ -47,6 +47,14 @@
 
 .actions {
   display: flex;
+  justify-content: space-between;
+}
+
+.actionButtons {
+  display: flex;
   gap: 0.5rem;
-  justify-content: flex-end;
+}
+
+.errorText {
+  color: var(--color-danger);
 }
