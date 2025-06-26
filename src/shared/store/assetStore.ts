@@ -17,4 +17,4 @@ export const useAssetStore = create<AppState>((set) => ({
   setAssetList: (assets) => set({ assetList: assets }),
   fullAssetList: [],
   setFullAssetList: (assets) => set({ fullAssetList: assets }),
-})); 
+}));

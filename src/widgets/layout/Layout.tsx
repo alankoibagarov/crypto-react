@@ -16,42 +16,48 @@ export const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
   const tab = location.pathname === '/trade' ? 1 : 0;
   const tabs = [
-      {
-        label: 'Home',
-        path: '/',
-      },
-      {
-        label: 'Trade',
-        path: '/trade',
-      },
+    {
+      label: 'Home',
+      path: '/',
+    },
+    {
+      label: 'Trade',
+      path: '/trade',
+    },
   ];
   const [loginOpen, setLoginOpen] = useState(false);
-  const user = useUserStore((state) => state.user)
-  const setUser = useUserStore((state) => state.setUser)
+  const user = useUserStore((state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
 
   const handleLogin = (email: string, password: string) => {
-      setUser({ email, password});
-      setLoginOpen(false);
-      toast.success('Logged in')
+    setUser({ email, password });
+    setLoginOpen(false);
+    toast.success('Logged in');
   };
 
   const handleLogout = () => {
-    if(confirm('Do you really want to logout?')) {
+    if (confirm('Do you really want to logout?')) {
       setUser(null);
       setLoginOpen(false);
-      toast.success('Logged out')
+      toast.success('Logged out');
     }
   };
 
   return (
     <div className={styles.layout}>
-       <Header tabs={tabs} tab={tab} user={user} setLoginOpen={setLoginOpen} onLogout={handleLogout}/>
+      <Header
+        tabs={tabs}
+        tab={tab}
+        user={user}
+        setLoginOpen={setLoginOpen}
+        onLogout={handleLogout}
+      />
       <main className={styles.main}>{children}</main>
-      <LoginModal 
-        open={loginOpen} 
+      <LoginModal
+        open={loginOpen}
         onClose={() => setLoginOpen(false)}
         onLogin={handleLogin}
       />
     </div>
   );
-}; 
+};

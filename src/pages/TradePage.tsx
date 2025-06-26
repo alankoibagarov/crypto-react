@@ -7,4 +7,4 @@ export const TradePage = () => {
       <Transfer />
     </div>
   );
-}; 
+};
