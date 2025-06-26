@@ -25,7 +25,7 @@ export interface CoinListItem {
 export const fetchCryptoCoins = async (
   page: number = 1
 ): Promise<CryptoCoin[]> => {
-  const response = await cryptoApi.get('/coins/marketsz', {
+  const response = await cryptoApi.get('/coins/markets', {
     params: {
       vs_currency: 'usd',
       order: 'market_cap_desc',
@@ -38,7 +38,7 @@ export const fetchCryptoCoins = async (
 };
 
 export const fetchCoinList = async (): Promise<CryptoCoin[]> => {
-  const response = await cryptoApi.get('/coins/marketsz', {
+  const response = await cryptoApi.get('/coins/markets', {
     params: {
       vs_currency: 'usd',
       order: 'market_cap_desc',

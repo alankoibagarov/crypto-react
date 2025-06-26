@@ -7,7 +7,7 @@ import { useLoginModalStore } from '../../store/loginModalStore';
 
 interface LoginModalProps {
   onClose: () => void;
-  onLogin: (email: string, password: string) => void;
+  onLogin: (email: string, password: string, redirectLocation?: string) => void;
 }
 
 export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
@@ -15,7 +15,7 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
-  const { isModalOpen } = useLoginModalStore();
+  const { isModalOpen, redirectLocation } = useLoginModalStore();
 
   useEffect(() => {
     if (isModalOpen) {
@@ -32,7 +32,7 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
     setLoginError('');
     setTimeout(() => {
       if (validateUser(email, password)) {
-        onLogin(email, password);
+        onLogin(email, password, redirectLocation);
         setEmail('');
         setPassword('');
       } else {
@@ -71,13 +71,6 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
             required
           />
           <div className={styles.actions}>
-            {loading ? (
-              <Loader />
-            ) : (
-              <Button type="submit" disabled={!email || !password || loading}>
-                Login
-              </Button>
-            )}
             <Button
               disabled={loading}
               type="button"
@@ -86,6 +79,13 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
             >
               Cancel
             </Button>
+            {loading ? (
+              <Loader />
+            ) : (
+              <Button type="submit" disabled={!email || !password || loading}>
+                Login
+              </Button>
+            )}
           </div>
           {loginError && <p className="text-danger">{loginError}</p>}
         </form>

@@ -5,8 +5,9 @@ import { type CryptoCoin, fetchCoinList } from '../../shared/api/cryptoApi';
 import { useQuery } from '@tanstack/react-query';
 import { SwapIcon } from '../../shared/ui/Icons/SwapIcon';
 import { useUserStore } from '../../shared/store/userStore';
-import { Button } from '../../shared/ui/Button/Button';
 import { useToast } from '../../shared/store/useToastStore';
+import { Button } from '../../shared/ui/Button/Button';
+import { Loader } from '../../shared/ui/Loader/Loader';
 
 export const Transfer: FC = () => {
   const user = useUserStore((state) => state.user);
@@ -16,12 +17,12 @@ export const Transfer: FC = () => {
   const toast = useToast();
 
   const [fromAmount, setFromAmount] = useState<number>(1);
-  const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
   const [isSwapped, setIsSwapped] = useState(false);
   const [exchangeRate, setExchangeRate] = useState<number>(0);
   const [currency, setCurrency] = useState('');
+  const [refetchTimeout, setRefetchTimeout] = useState(0);
 
-  const { data, isSuccess, isFetching, isError } = useQuery<
+  const { data, isSuccess, isFetching, isError, refetch } = useQuery<
     CryptoCoin[],
     Error
   >({
@@ -30,9 +31,35 @@ export const Transfer: FC = () => {
     staleTime: 5 * 60 * 1000,
   });
 
+  const handleSwap = () => {
+    setIsSwapped(!isSwapped);
+  };
+
+  const handleRefetchTimeout = async () => {
+    if (refetchTimeout > 0) return;
+
+    await refetch();
+    setRefetchTimeout(5);
+  };
+
+  useEffect(() => {
+    if (refetchTimeout === 0) return;
+
+    const timer = setInterval(() => {
+      setRefetchTimeout((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [refetchTimeout]);
+
+  const availableCurrencies = fullAssetList.map((coin, index) => (
+    <option key={`${coin.id}-${index}`} value={coin.id}>
+      {coin.name} ({coin.symbol.toUpperCase()})
+    </option>
+  ));
+
   useEffect(() => {
     if (isSuccess) {
-      console.log('Success:', data);
       setFullAssetList([...fullAssetList, ...data]);
     }
   }, [isSuccess]);
@@ -47,8 +74,6 @@ export const Transfer: FC = () => {
     if (Number(fromAmount) < 0) {
       setFromAmount(0);
     }
-    const convertedAmount = Number(fromAmount) * exchangeRate;
-    setConvertedAmount(convertedAmount);
   }, [fromAmount]);
 
   useEffect(() => {
@@ -59,40 +84,20 @@ export const Transfer: FC = () => {
 
     const exchangeRate = fromCoin?.current_price ?? 0;
     setExchangeRate(exchangeRate);
-    const convertedAmount = Number(fromAmount) * exchangeRate;
-    setConvertedAmount(convertedAmount);
   }, [fullAssetList, currency]);
 
-  const handleSwap = () => {
-    setIsSwapped(!isSwapped);
-  };
+  if (isFetching) {
+    return <LoadingCard />;
+  }
 
-  const handleConvert = () => {
-    if (!fromAmount || Number(fromAmount) <= 0 || !currency) {
-      toast.error('Please enter a valid amount and select currency');
-      return;
-    }
-
-    const fromCoin = fullAssetList.find((coin) => coin.id === currency);
-
-    if (fromCoin) {
-      const result = Number(fromAmount) * fromCoin.current_price;
-      setConvertedAmount(result);
-
-      toast.success(
-        `Successfully converted ${fromAmount} ${fromCoin.symbol.toUpperCase()} to ${result.toFixed(6)} USD`
-      );
-    } else {
-      toast.error('Selected currencies not found.');
-      setConvertedAmount(null);
-    }
-  };
-
-  const availableCurrencies = fullAssetList.map((coin, index) => (
-    <option key={`${coin.id}-${index}`} value={coin.id}>
-      {coin.name} ({coin.symbol.toUpperCase()})
-    </option>
-  ));
+  if (isError) {
+    return (
+      <ErrorCard
+        onRefetch={() => handleRefetchTimeout()}
+        timeout={refetchTimeout}
+      />
+    );
+  }
 
   return (
     <div className={styles.transferContainer}>
@@ -106,6 +111,7 @@ export const Transfer: FC = () => {
           <input
             id="fromAmount"
             type="number"
+            className={styles.input}
             value={fromAmount}
             onChange={(e) => setFromAmount(Number(e.target.value))}
             placeholder="Enter amount"
@@ -129,6 +135,7 @@ export const Transfer: FC = () => {
           disabled={!user}
           className={styles.swapButton}
           onClick={handleSwap}
+          title="Swap"
         >
           <SwapIcon />
         </button>
@@ -149,37 +156,59 @@ export const Transfer: FC = () => {
                   maximumFractionDigits: 9,
                 })}
           </div>
-          <input
-            id="toAmount"
-            type="text"
-            value={
-              isSwapped
-                ? ((convertedAmount ?? 1) / exchangeRate).toLocaleString(
-                    'en-US',
-                    {
-                      maximumFractionDigits: 6,
-                    }
-                  )
-                : convertedAmount?.toLocaleString('en-US', {
+          <div className={styles.conversionRate}>
+            {isSwapped
+              ? ((fromAmount ?? 1) * (1 / exchangeRate)).toLocaleString(
+                  'en-US',
+                  {
                     maximumFractionDigits: 6,
-                  })
-            }
-            readOnly
-            placeholder="Converted amount"
-            disabled={isFetching || !user}
-          />
+                  }
+                )
+              : ((fromAmount ?? 1) * exchangeRate)?.toLocaleString('en-US', {
+                  maximumFractionDigits: 6,
+                })}
+          </div>
         </div>
       </div>
-
-      <Button variant={'primary'} disabled={!user} onClick={handleConvert}>
-        Convert
-      </Button>
 
       {!user && (
         <p className={styles.disabled}>
           Functionality is disabled. Please, Login to use it
         </p>
       )}
+    </div>
+  );
+};
+
+type ErrorCardProps = {
+  timeout: number;
+  onRefetch: () => void;
+};
+
+const ErrorCard: FC<ErrorCardProps> = ({ timeout, onRefetch }) => {
+  return (
+    <div className={styles.transferContainer}>
+      <h2 className={styles.errorHeader}>
+        Error occured, while fetching data. You can try to reload by pushing the
+        button below.
+      </h2>
+      <Button disabled={!!timeout} onClick={() => onRefetch()}>
+        Reload
+      </Button>
+      {timeout ? <span>You can try again in {timeout} seconds</span> : ''}
+    </div>
+  );
+};
+
+const LoadingCard: FC = () => {
+  return (
+    <div
+      className={[styles.transferContainer, styles.loadingContainer]
+        .join(' ')
+        .trim()}
+    >
+      <h2>Loading</h2>
+      <Loader />
     </div>
   );
 };

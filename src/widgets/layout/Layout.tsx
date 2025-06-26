@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
-import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Header } from '../../shared/ui/Header/Header';
 import styles from './Layout.module.css';
 import { LoginModal } from '../../shared/ui/LoginModal/LoginModal';
@@ -30,11 +29,20 @@ export const Layout = ({ children }: LayoutProps) => {
   const { setModalOpen } = useLoginModalStore();
   const user = useUserStore((state) => state.user);
   const setUser = useUserStore((state) => state.setUser);
+  const navigate = useNavigate();
 
-  const handleLogin = (email: string, password: string) => {
-    setUser({ email, password });
-    setModalOpen(false);
+  const handleLogin = async (
+    email: string,
+    password: string,
+    redirectLocation?: string
+  ) => {
+    await setUser({ email, password });
+    await setModalOpen(false);
     toast.success('Logged in');
+
+    if (redirectLocation) {
+      navigate(redirectLocation, { replace: true });
+    }
   };
 
   const handleLogout = () => {

@@ -1,6 +1,6 @@
 {
-  "name": "react-crypto",
-  "homepage": "https://alankoibagarov.github.io/react-crypto",
+  "name": "crypto-react",
+  "homepage": "https://alankoibagarov.github.io/crypto-react",
   "private": true,
   "version": "0.0.0",
   "type": "module",

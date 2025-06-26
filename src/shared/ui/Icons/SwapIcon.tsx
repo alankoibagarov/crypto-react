@@ -1,4 +1,4 @@
-export const SwapIcon = ({ size = 24, color = 'currentColor' }) => (
+export const SwapIcon = ({ size = 36, color = 'currentColor' }) => (
   <svg
     width={size}
     height={size}

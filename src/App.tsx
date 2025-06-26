@@ -5,6 +5,7 @@ import { TradePage } from './pages/TradePage';
 import { queryClient } from './shared/api/queryClient';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from './shared/ui/Toast/Toast';
+import ProtectedRoute from './shared/routing/ProtectedRoute';
 
 function App() {
   return (
@@ -13,7 +14,14 @@ function App() {
         <Layout>
           <Routes>
             <Route path="/" element={<MainPage />} />
-            <Route path="/trade" element={<TradePage />} />
+            <Route
+              path="/trade"
+              element={
+                <ProtectedRoute>
+                  <TradePage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Layout>
         <ToastContainer />
