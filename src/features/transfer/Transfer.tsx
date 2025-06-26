@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { SwapIcon } from '../../shared/ui/Icons/SwapIcon';
 import { useUserStore } from '../../shared/store/userStore';
 import { Button } from '../../shared/ui/Button/Button';
-import { useToast } from '../../shared/ui/Toast/Toast';
+import { useToast } from '../../shared/ui/Toast/useToastStore';
 
 export const Transfer: FC = () => {
   const user = useUserStore((state) => state.user);
@@ -22,7 +22,10 @@ export const Transfer: FC = () => {
   const [isSwapped, setIsSwapped] = useState(false);
   const [exchangeRate, setExchangeRate] = useState<number>(0);
 
-  const { data, isSuccess, isFetching } = useQuery<CryptoCoin[], Error>({
+  const { data, isSuccess, isFetching, isError } = useQuery<
+    CryptoCoin[],
+    Error
+  >({
     queryKey: ['fullCoinList'],
     queryFn: fetchCoinList,
     staleTime: 5 * 60 * 1000,
@@ -34,6 +37,12 @@ export const Transfer: FC = () => {
       setFullAssetList([...fullAssetList, ...data]);
     }
   }, [isSuccess]);
+
+  useEffect(() => {
+    if (isError) {
+      toast.error('Error while fetching data');
+    }
+  }, [isError]);
 
   useEffect(() => {
     if (Number(fromAmount) < 0) {

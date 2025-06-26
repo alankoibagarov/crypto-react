@@ -37,6 +37,7 @@ export const Dropdown: FC<DropdownProps> = ({
   return (
     <div className={styles.dropdown} ref={dropdownRef}>
       <Button
+        variant="secondary"
         disabled={disabled}
         onClick={toggleDropdown}
         className={styles.dropdownToggle}

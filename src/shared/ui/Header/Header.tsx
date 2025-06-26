@@ -21,14 +21,15 @@ export const Header = ({
 
   return (
     <header className={styles.header}>
-      <div className={styles.header__container}>
+      <div className={styles.headerContainer}>
         <img className={styles.logo} src={logoImg} alt="logo" />
-        <span className={styles.header__title}>React Crypto App</span>
-        <nav className={styles.header__nav}>
+        <span className={styles.headerTitle}>React Crypto App</span>
+        <nav className={styles.headerNav}>
           {tabs.map((tabItem, index) => (
             <Button
+              className={styles.navButton}
               key={index}
-              variant={index === 0 ? 'primary' : 'secondary'}
+              variant={'secondary'}
               onClick={() => navigate(tabItem.path)}
               active={index === tab}
             >
@@ -37,15 +38,15 @@ export const Header = ({
           ))}
         </nav>
       </div>
-      <div className={styles.header__container}>
+      <div className={styles.headerContainer}>
         {user ? (
           <>
+            <span className="font-medium">{user.email}</span>
             <img
               className={styles.avatar}
               src={user.avatarUrl || userImg}
               alt="avatar"
             />
-            <span className="font-medium">{user.email}</span>
             <Button onClick={() => onLogout()}>Log out</Button>
           </>
         ) : (

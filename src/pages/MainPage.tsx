@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { Dropdown } from '../shared/ui/Dropdown/Dropdown';
 import { useUserStore } from '../shared/store/userStore';
 import { Loader } from '../shared/ui/Loader/Loader';
-import { useToast } from '../shared/ui/Toast/Toast';
+import { useToast } from '../shared/ui/Toast/useToastStore';
 
 export const MainPage = () => {
   const user = useUserStore((state) => state.user);
@@ -18,7 +18,7 @@ export const MainPage = () => {
   const assetList = useAssetStore((state) => state.assetList);
   const setAssetList = useAssetStore((state) => state.setAssetList);
 
-  const { data, isSuccess, refetch, isFetching } = useQuery<
+  const { data, isSuccess, refetch, isFetching, isError } = useQuery<
     CryptoCoin[],
     Error
   >({
@@ -32,6 +32,12 @@ export const MainPage = () => {
       setAssetList([...assetList, ...data]);
     }
   }, [isSuccess, data, setAssetList]);
+
+  useEffect(() => {
+    if (isError) {
+      toast.error('Error while fetching data');
+    }
+  }, [isError]);
 
   const columns: Column[] = [
     {

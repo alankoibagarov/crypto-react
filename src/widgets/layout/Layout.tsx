@@ -5,7 +5,7 @@ import { Header } from '../../shared/ui/Header/Header';
 import styles from './Layout.module.css';
 import { LoginModal } from '../../shared/ui/LoginModal/LoginModal';
 import { useUserStore } from '../../shared/store/userStore';
-import { useToast } from '../../shared/ui/Toast/Toast';
+import { useToast } from '../../shared/ui/Toast/useToastStore';
 
 interface LayoutProps {
   children: ReactNode;
