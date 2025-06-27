@@ -11,12 +11,18 @@ import { Loader } from '@/components/Loader/Loader';
 import { useToast } from '@/store/useToastStore';
 import { useLoginModalStore } from '@/store/loginModalStore';
 import { Action } from '@/enums';
+import {
+  DEFAULT_PAGE,
+  TABLE_ICON_WIDTH,
+  TABLE_ACTIONS_WIDTH,
+  PRICE_MAX_FRACTION_DIGITS,
+} from '@/const';
 
 const MainPage = () => {
   const user = useUserStore((state) => state.user);
   const toast = useToast();
 
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(DEFAULT_PAGE);
 
   const setLoading = useAssetStore((state) => state.setLoading);
   const assetList = useAssetStore((state) => state.assetList);
@@ -36,7 +42,7 @@ const MainPage = () => {
     {
       name: 'Icon',
       key: 'image',
-      width: 80,
+      width: TABLE_ICON_WIDTH,
       renderCell: (_, row) => (
         <img className={styles.icon} src={String(row.image)} alt="Icon" />
       ),
@@ -51,14 +57,14 @@ const MainPage = () => {
       key: 'current_price',
       renderCell: (_, row) =>
         row.current_price?.toLocaleString('en-US', {
-          maximumFractionDigits: 3,
+          maximumFractionDigits: PRICE_MAX_FRACTION_DIGITS,
         }),
       sortable: true,
     },
     {
       name: '',
       key: 'actions',
-      width: 100,
+      width: TABLE_ACTIONS_WIDTH,
       renderCell: () => (
         <>
           <div title={!user ? 'Please log in' : ''} className={styles.actions}>

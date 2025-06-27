@@ -6,6 +6,7 @@ import { useLoginModalStore } from '@/store/loginModalStore';
 import CryptoJS from 'crypto-js';
 import { fetchUserList, type UserListItem } from '@/api/authApi';
 import { useToast } from '@/store/useToastStore';
+import { LOGIN_MODAL_LOADER_SIZE } from '@/const';
 
 interface LoginModalProps {
   onClose: () => void;
@@ -146,7 +147,7 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
                 Cancel
               </Button>
               {loading ? (
-                <Loader size="32" />
+                <Loader size={String(LOGIN_MODAL_LOADER_SIZE)} />
               ) : (
                 <Button type="submit" disabled={isLoginButtonDisabled()}>
                   Login

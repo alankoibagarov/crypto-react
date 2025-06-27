@@ -5,11 +5,18 @@ import { LoginModal } from '@/components/LoginModal/LoginModal';
 import { useUserStore } from '@/store/userStore';
 import { useToast } from '@/store/useToastStore';
 import { useLoginModalStore } from '@/store/loginModalStore';
+import {
+  MAIN_LAYOUT_TRADE_TAB_INDEX,
+  MAIN_LAYOUT_HOME_TAB_INDEX,
+} from '@/const';
 
 export const MainLayout = () => {
   const toast = useToast();
   const location = useLocation();
-  const tab = location.pathname === '/trade' ? 1 : 0;
+  const tab =
+    location.pathname === '/trade'
+      ? MAIN_LAYOUT_TRADE_TAB_INDEX
+      : MAIN_LAYOUT_HOME_TAB_INDEX;
   const tabs = [
     {
       label: 'Home',

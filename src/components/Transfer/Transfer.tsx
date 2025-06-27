@@ -14,6 +14,9 @@ import {
   RATE_FRACTION_DIGITS,
   REFETCH_INTERVAL,
   REFETCH_TIMEOUT,
+  TRANSFER_DEFAULT_FROM_AMOUNT,
+  TRANSFER_DEFAULT_EXCHANGE_RATE,
+  TRANSFER_DEFAULT_REFETCH_TIMEOUT,
 } from '@/const';
 
 export const Transfer: FC = () => {
@@ -23,11 +26,17 @@ export const Transfer: FC = () => {
   const setFullAssetList = useAssetStore((state) => state.setFullAssetList);
   const toast = useToast();
 
-  const [fromAmount, setFromAmount] = useState<number>(1);
+  const [fromAmount, setFromAmount] = useState<number>(
+    TRANSFER_DEFAULT_FROM_AMOUNT
+  );
   const [isSwapped, setIsSwapped] = useState(false);
-  const [exchangeRate, setExchangeRate] = useState<number>(0);
+  const [exchangeRate, setExchangeRate] = useState<number>(
+    TRANSFER_DEFAULT_EXCHANGE_RATE
+  );
   const [currency, setCurrency] = useState('');
-  const [refetchTimeout, setRefetchTimeout] = useState(0);
+  const [refetchTimeout, setRefetchTimeout] = useState(
+    TRANSFER_DEFAULT_REFETCH_TIMEOUT
+  );
 
   const availableCurrencies = fullAssetList.map((coin, index) => (
     <option key={`${coin.id}-${index}`} value={coin.id}>
@@ -99,7 +108,8 @@ export const Transfer: FC = () => {
     }
     const fromCoin = fullAssetList.find((coin) => coin.id === currency);
 
-    const exchangeRate = fromCoin?.current_price ?? 0;
+    const exchangeRate =
+      fromCoin?.current_price ?? TRANSFER_DEFAULT_EXCHANGE_RATE;
     setExchangeRate(exchangeRate);
   }, [fullAssetList, currency]);
 
