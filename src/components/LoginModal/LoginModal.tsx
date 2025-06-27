@@ -34,7 +34,7 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     setLoading(true);
@@ -110,7 +110,7 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <div className={styles.title}>Login</div>
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form className={styles.form} onSubmit={handleFormSubmit}>
           <input
             className={styles.input}
             type="email"
