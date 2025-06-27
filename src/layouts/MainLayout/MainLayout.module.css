@@ -15,15 +15,15 @@
 .modalOverlay {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: var(--z-index-modal);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: var(--color-modal-overlay);
 }
 
 .modalContent {
-  background: #fff;
+  background: var(--color-white);
   border-radius: 1rem;
   box-shadow: 0 4px 32px 0 rgba(30, 41, 59, 0.12);
   padding: 2rem;
@@ -48,7 +48,7 @@
 }
 
 .input {
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-input-border);
   border-radius: 0.5rem;
   padding: 0.5rem 0.75rem;
   font-size: 1rem;

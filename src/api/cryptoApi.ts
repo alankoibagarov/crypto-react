@@ -1,7 +1,8 @@
+import { COINS_FOR_EXCHANGE, COINS_PER_PAGE } from '@/const';
 import axios from 'axios';
 
 const cryptoApi = axios.create({
-  baseURL: 'https://api.coingecko.com/api/v3',
+  baseURL: import.meta.env.VITE_CRYPTO_API_LINK,
   headers: {
     'x-cg-demo-api-key': import.meta.env.VITE_CRYPTO_API_KEY,
   },
@@ -29,7 +30,7 @@ export const fetchCryptoCoins = async (
     params: {
       vs_currency: 'usd',
       order: 'market_cap_desc',
-      per_page: 10,
+      per_page: COINS_PER_PAGE,
       page,
       sparkline: false,
     },
@@ -42,7 +43,7 @@ export const fetchCoinList = async (): Promise<CryptoCoin[]> => {
     params: {
       vs_currency: 'usd',
       order: 'market_cap_desc',
-      per_page: 100, // fetch only top 100 for exchange
+      per_page: COINS_FOR_EXCHANGE, // fetch only top 100 for exchange
       page: 1,
       sparkline: false,
     },

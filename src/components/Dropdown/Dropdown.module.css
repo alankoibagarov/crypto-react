@@ -5,10 +5,10 @@
 
 .dropdownContent {
   position: absolute;
-  background-color: #f9f9f9;
+  background-color: var(--color-dropdown-bg);
   min-width: 120px;
   box-shadow: var(--shadow-md);
-  z-index: 1;
+  z-index: var(--z-index-dropdown);
   border-radius: var(--radius-md);
   padding: var(--padding-sm);
   display: flex;

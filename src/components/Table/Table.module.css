@@ -4,6 +4,7 @@
   background: var(--color-white);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
+  table-layout: fixed;
 }
 
 .thead {
@@ -25,9 +26,9 @@
   font-size: var(--font-size-md);
   letter-spacing: 0.02em;
   position: sticky;
-  top: calc(var(--header-height) + 2px);
+  top: var(--header-height);
   background: var(--color-white);
-  z-index: 100;
+  z-index: var(--z-index-table-header);
   box-shadow: var(--shadow-table-header);
 }
 
@@ -37,7 +38,7 @@
 }
 
 .tr:nth-child(even) .td {
-  background: #f3f4f6;
+  background: var(--color-table-row-alt);
 }
 
 .sortImg {

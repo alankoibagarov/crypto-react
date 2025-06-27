@@ -36,7 +36,7 @@ const MainPage = () => {
     {
       name: 'Icon',
       key: 'image',
-      width: 40,
+      width: 80,
       renderCell: (_, row) => (
         <img className={styles.icon} src={String(row.image)} alt="Icon" />
       ),

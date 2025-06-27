@@ -37,7 +37,6 @@ export const useUserStore = create<UserState>()(
         },
         setItem: (name, value) => {
           const json = JSON.stringify(value);
-          CryptoJS.AES.encrypt('123456', key).toString();
           const encoded = CryptoJS.AES.encrypt(json, key).toString();
           localStorage.setItem(name, encoded);
         },

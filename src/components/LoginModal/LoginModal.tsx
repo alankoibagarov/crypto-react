@@ -26,7 +26,6 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
   const { isModalOpen, redirectLocation } = useLoginModalStore();
   const key = import.meta.env.VITE_ENCRYPTION_KEY;
   const toast = useToast();
-  const [userList, setUserList] = useState<UserListItem[]>([]);
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const isValidEmail = (email: string) => emailRegex.test(email);
 
@@ -43,9 +42,8 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
 
     try {
       const users = await fetchUserList();
-      setUserList(users);
 
-      if (handleUserValidation()) {
+      if (handleUserValidation(users)) {
         onLogin(formData.email, redirectLocation);
         setFormData({ email: '', password: '' });
       } else {
@@ -66,8 +64,8 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
     return !isValidEmail(formData.email) || !formData.password || loading;
   };
 
-  const handleUserValidation = (): boolean => {
-    return userList.some((user: UserListItem) => {
+  const handleUserValidation = (users: UserListItem[]): boolean => {
+    return users.some((user: UserListItem) => {
       const passwordBytes = CryptoJS.AES.decrypt(user.password, key);
       const decryptedPassword = passwordBytes.toString(CryptoJS.enc.Utf8);
 

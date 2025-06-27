@@ -77,11 +77,17 @@ export const Table = ({
 
   return (
     <table className={styles.table}>
+      <colgroup>
+        {columns.map((column) => (
+          <col style={{ width: column.width }} />
+        ))}
+      </colgroup>
       <thead>
         <tr>
           {columns.map((column, index) => (
             <th
               className={clsx(styles.th, column.sortable && styles.sortable)}
+              style={{ width: column.width }}
               key={index}
               onClick={() => handleTableSort(column)}
             >

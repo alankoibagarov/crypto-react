@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--gap-sm);
-  z-index: 1000;
+  z-index: var(--z-index-toast);
 }
 
 .toast {
@@ -23,7 +23,7 @@
 }
 
 .toast.success {
-  background-color: #10b981;
+  background-color: var(--color-toast-success);
 }
 
 .toast.error {
@@ -31,11 +31,11 @@
 }
 
 .toast.warning {
-  background-color: #f59e0b;
+  background-color: var(--color-toast-warning);
 }
 
 .toast.info {
-  background-color: #3b82f6;
+  background-color: var(--color-toast-info);
 }
 
 .toast.closing {

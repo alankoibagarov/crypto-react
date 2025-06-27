@@ -9,7 +9,12 @@ import { useToast } from '@/store/useToastStore';
 import { Button } from '@/components/Button/Button';
 import { Loader } from '@/components/Loader/Loader';
 import clsx from 'clsx';
-import { REFETCH_INTERVAL, REFETCH_TIMEOUT } from '@/const';
+import {
+  CONVERSION_FRACTION_DIGITS,
+  RATE_FRACTION_DIGITS,
+  REFETCH_INTERVAL,
+  REFETCH_TIMEOUT,
+} from '@/const';
 
 export const Transfer: FC = () => {
   const user = useUserStore((state) => state.user);
@@ -123,22 +128,35 @@ export const Transfer: FC = () => {
           <input
             id="fromAmount"
             type="number"
-            className={styles.input}
+            className={clsx(styles.input)}
             value={fromAmount}
             onChange={(e) => setFromAmount(Number(e.target.value))}
             placeholder="Enter amount"
             step="any"
             disabled={isFetching || !user}
           />
-          <select
-            id="fromCurrency"
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-            disabled={!fullAssetList.length || isFetching || !user}
-          >
-            <option value="">Select</option>
-            {availableCurrencies}
-          </select>
+          {!isSwapped ? (
+            <select
+              id="fromCurrency"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              disabled={!fullAssetList.length || isFetching || !user}
+            >
+              <option value="">Select</option>
+              {availableCurrencies}
+            </select>
+          ) : (
+            <div className={styles.conversionRate}>
+              Conversion rate:{' '}
+              {isSwapped
+                ? (1 / exchangeRate).toLocaleString('en-US', {
+                    maximumFractionDigits: CONVERSION_FRACTION_DIGITS,
+                  })
+                : exchangeRate.toLocaleString('en-US', {
+                    maximumFractionDigits: CONVERSION_FRACTION_DIGITS,
+                  })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -159,27 +177,40 @@ export const Transfer: FC = () => {
         </label>
         <div className={styles.inputGroup}>
           <div className={styles.conversionRate}>
-            Conversion rate:{' '}
-            {isSwapped
-              ? (1 / exchangeRate).toLocaleString('en-US', {
-                  maximumFractionDigits: 9,
-                })
-              : exchangeRate.toLocaleString('en-US', {
-                  maximumFractionDigits: 9,
-                })}
-          </div>
-          <div className={styles.conversionRate}>
             {isSwapped
               ? ((fromAmount ?? 1) * (1 / exchangeRate)).toLocaleString(
                   'en-US',
                   {
-                    maximumFractionDigits: 6,
+                    maximumFractionDigits: RATE_FRACTION_DIGITS,
                   }
                 )
               : ((fromAmount ?? 1) * exchangeRate)?.toLocaleString('en-US', {
-                  maximumFractionDigits: 6,
+                  maximumFractionDigits: RATE_FRACTION_DIGITS,
                 })}
           </div>
+
+          {!isSwapped ? (
+            <div className={styles.conversionRate}>
+              Conversion rate:{' '}
+              {isSwapped
+                ? (1 / exchangeRate).toLocaleString('en-US', {
+                    maximumFractionDigits: CONVERSION_FRACTION_DIGITS,
+                  })
+                : exchangeRate.toLocaleString('en-US', {
+                    maximumFractionDigits: CONVERSION_FRACTION_DIGITS,
+                  })}
+            </div>
+          ) : (
+            <select
+              id="fromCurrency"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              disabled={!fullAssetList.length || isFetching || !user}
+            >
+              <option value="">Select</option>
+              {availableCurrencies}
+            </select>
+          )}
         </div>
       </div>
 
