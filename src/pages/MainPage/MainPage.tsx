@@ -88,6 +88,7 @@ const MainPage = () => {
     setLoading(true);
     await setPage(page + 1);
     await refetch();
+    handleThrowError();
     setLoading(false);
   };
 
@@ -101,6 +102,12 @@ const MainPage = () => {
     toast.success(`${actionText} button is clicked`);
   };
 
+  const handleThrowError = () => {
+    if (isError) {
+      toast.error('Error while fetching data');
+    }
+  };
+
   // Set asset list to store if fetching is success
   useEffect(() => {
     if (isSuccess) {
@@ -110,9 +117,7 @@ const MainPage = () => {
 
   // Show error toast if fetching failed
   useEffect(() => {
-    if (isError) {
-      toast.error('Error while fetching data');
-    }
+    handleThrowError();
   }, [isError]);
 
   return (

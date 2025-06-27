@@ -46,7 +46,15 @@ export const Transfer: FC = () => {
     if (refetchTimeout > 0) return;
 
     await refetch();
+
+    handleThrowError();
     setRefetchTimeout(REFETCH_TIMEOUT);
+  };
+
+  const handleThrowError = () => {
+    if (isError) {
+      toast.error('Error while fetching data');
+    }
   };
 
   // Setting timeout for refetch availability in case of error
@@ -69,9 +77,7 @@ export const Transfer: FC = () => {
 
   // Show error toast if fetching failed
   useEffect(() => {
-    if (isError) {
-      toast.error('Error while fetching data');
-    }
+    handleThrowError();
   }, [isError]);
 
   // From amount cannot be negative

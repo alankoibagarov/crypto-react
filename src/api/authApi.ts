@@ -1,6 +1,6 @@
-import { LOGIN_TIMEOUT } from '@const';
-import { userList } from '@const/userList';
-import { delay } from '@utils';
+import { LOGIN_TIMEOUT } from '@/const';
+import { userList } from '@/const/userList';
+import { delay } from '@/utils';
 
 export interface UserListItem {
   login: string;
