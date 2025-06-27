@@ -2,12 +2,12 @@
   position: sticky;
   top: 0;
   z-index: 20;
-  background: white;
-  box-shadow: 0 4px 16px 0 rgba(99, 102, 241, 0.15);
+  background: var(--color-white);
+  box-shadow: var(--shadow-md);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1rem;
+  padding: 0 var(--padding-lg);
   height: var(--header-height);
 }
 
@@ -15,8 +15,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1rem;
-  gap: 1rem;
+  padding: 0 var(--padding-lg);
+  gap: var(--gap-md);
 }
 
 .headerNav {
@@ -25,14 +25,14 @@
 
 .headerTitle {
   font-size: 20px;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
 }
 
 .avatar,
 .logo {
   width: 40px;
   height: 40px;
-  border-radius: 5px;
+  border-radius: var(--radius-avatar);
 }
 
 .navButton {

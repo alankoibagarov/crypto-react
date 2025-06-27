@@ -1,24 +1,24 @@
 .toastContainer {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  bottom: var(--padding-2xl);
+  right: var(--padding-2xl);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--gap-sm);
   z-index: 1000;
 }
 
 .toast {
-  padding: 1rem 1.5rem;
-  border-radius: 0.5rem;
-  color: white;
-  font-weight: 500;
+  padding: var(--padding-lg) var(--padding-xl);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  font-weight: var(--font-weight-medium);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--gap-sm);
   min-width: 300px;
   max-width: 400px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-toast);
   animation: slideIn 0.3s ease-out;
 }
 
@@ -27,7 +27,7 @@
 }
 
 .toast.error {
-  background-color: #ef4444;
+  background-color: var(--color-danger);
 }
 
 .toast.warning {
@@ -55,14 +55,14 @@
 .closeButton {
   background: none;
   border: none;
-  color: white;
+  color: var(--color-white);
   opacity: 0.7;
   cursor: pointer;
-  padding: 0.25rem;
+  padding: var(--padding-xs);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.2s;
+  transition: var(--transition-opacity);
 }
 
 .closeButton:hover {

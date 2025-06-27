@@ -1,9 +1,9 @@
 .wrapper {
   animation: fadeIn 0.8s ease;
-  padding: 2rem;
-  border-radius: 1rem;
-  background: white;
-  box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.04);
+  padding: var(--padding-2xl);
+  border-radius: var(--radius-lg);
+  background: var(--color-white);
+  box-shadow: var(--shadow-sm);
 }
 
 @keyframes fadeIn {
@@ -20,14 +20,14 @@
 .title {
   color: var(--color-primary);
   font-family: var(--font-main);
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--gap-md);
 }
 
 .actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--gap-xs);
 }
 
 .icon {
@@ -38,5 +38,5 @@
 .showMoreBlock {
   display: flex;
   justify-content: center;
-  margin-top: 1rem;
+  margin-top: var(--gap-md);
 }

@@ -1,7 +1,7 @@
 .wrapper {
   animation: fadeIn 0.8s ease;
-  padding: 2rem;
-  border-radius: 1rem;
+  padding: var(--padding-2xl);
+  border-radius: var(--radius-lg);
 }
 
 @keyframes fadeIn {
@@ -18,7 +18,7 @@
 .title {
   color: var(--color-primary);
   font-family: var(--font-main);
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--gap-md);
 }
