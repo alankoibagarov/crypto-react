@@ -5,7 +5,7 @@ import { HashRouter, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from '@/components/Toast/Toast';
 import ProtectedRoute from '@/routing/ProtectedRoute';
 import { lazy, Suspense } from 'react';
-import { ErrorBoundary } from '@utils/ErrorBoundary';
+import { ErrorBoundary } from '@components/ErrorBoundary/ErrorBoundary';
 
 const MainPage = lazy(() => import('@/pages/MainPage/MainPage'));
 const TradePage = lazy(() => import('@/pages/TradePage/TradePage'));

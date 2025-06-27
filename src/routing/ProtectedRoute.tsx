@@ -13,6 +13,7 @@ const ProtectedRoute = ({ children }: Props) => {
   const { setModalOpen } = useLoginModalStore();
   const location = useLocation();
 
+  // Show login modal if user tries to access protected route
   useEffect(() => {
     if (!user) {
       setModalOpen(true, location.pathname);

@@ -29,7 +29,7 @@
   outline: none;
   font-size: inherit;
   color: var(--color-text);
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-gray);
   width: 50%;
 
   appearance: none;
@@ -55,7 +55,7 @@
   background-repeat: no-repeat;
   background-position: right 0.75rem center;
   background-size: 20px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-gray);
 
   appearance: none;
   -webkit-appearance: none;
@@ -118,7 +118,7 @@
 .conversionRate {
   padding: 0.75rem 1rem;
   width: 50%;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--color-gray);
 }
 
 .errorHeader {

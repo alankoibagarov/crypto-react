@@ -4,7 +4,6 @@ import { Header } from './Header';
 import { vi } from 'vitest';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 
-// Mock useNavigate to spy on route changes
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router-dom')>();
   return {
@@ -45,7 +44,9 @@ describe('Header', () => {
   it('calls navigate when nav button is clicked', async () => {
     const user = userEvent.setup();
     const mockNavigate = vi.fn();
-    (useNavigate as unknown as vi.Mock).mockReturnValue(mockNavigate);
+    (useNavigate as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
+      mockNavigate
+    );
 
     render(
       <MemoryRouter>

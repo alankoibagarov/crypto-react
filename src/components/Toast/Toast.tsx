@@ -29,6 +29,7 @@ const ToastItem: FC<{ toast: Toast }> = ({ toast }) => {
   const { removeToast } = useToastStore();
   const [isClosing, setIsClosing] = useState(false);
 
+  // Remove toast by timeout
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsClosing(true);

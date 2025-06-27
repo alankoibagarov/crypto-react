@@ -11,6 +11,7 @@
   --color-text: #1e293b;
   --font-main: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   --header-height: 4rem;
+  --color-gray: #e5e7eb;
 }
 
 body {

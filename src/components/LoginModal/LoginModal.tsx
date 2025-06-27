@@ -1,11 +1,11 @@
 import { useEffect, useState, type FC, type FormEvent } from 'react';
 import styles from './LoginModal.module.css';
 import { Button } from '@/components/Button/Button';
-import { userList } from '@/const/userList';
 import { Loader } from '@/components/Loader/Loader';
 import { useLoginModalStore } from '@/store/loginModalStore';
 import CryptoJS from 'crypto-js';
-import { LOGIN_TIMEOUT } from '@/const';
+import { fetchUserList, type UserListItem } from '@/api/authApi';
+import { useToast } from '@/store/useToastStore';
 
 interface LoginModalProps {
   onClose: () => void;
@@ -25,40 +25,49 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
   const [loginError, setLoginError] = useState('');
   const { isModalOpen, redirectLocation } = useLoginModalStore();
   const key = import.meta.env.VITE_ENCRYPTION_KEY;
-
-  useEffect(() => {
-    if (isModalOpen) {
-      setLoginError('');
-      setFormData({ email: '', password: '' });
-      setFormErrors({ email: '', password: '' });
-    }
-  }, [isModalOpen]);
-
-  if (!isModalOpen) return null;
+  const toast = useToast();
+  const [userList, setUserList] = useState<UserListItem[]>([]);
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isValidEmail = (email: string) => emailRegex.test(email);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     setLoading(true);
     setLoginError('');
-    setTimeout(() => {
-      if (validateUser()) {
+
+    try {
+      const users = await fetchUserList();
+      setUserList(users);
+
+      if (handleUserValidation()) {
         onLogin(formData.email, redirectLocation);
         setFormData({ email: '', password: '' });
       } else {
         setLoginError('Wrong email or password');
       }
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'message' in error) {
+        toast.error((error as { message: string }).message);
+      } else {
+        toast.error('An unknown error occurred');
+      }
+    } finally {
       setLoading(false);
-    }, Math.random() * LOGIN_TIMEOUT);
+    }
   };
 
-  const validateUser = (): boolean => {
-    return userList.some((user: { login: string; password: string }) => {
+  const isLoginButtonDisabled = (): boolean => {
+    return !isValidEmail(formData.email) || !formData.password || loading;
+  };
+
+  const handleUserValidation = (): boolean => {
+    return userList.some((user: UserListItem) => {
       const passwordBytes = CryptoJS.AES.decrypt(user.password, key);
       const decryptedPassword = passwordBytes.toString(CryptoJS.enc.Utf8);
 
@@ -72,23 +81,32 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
     });
   };
 
-  const validateEmail = () => {
+  const handleEmailValidation = () => {
     setFormErrors((prev) => ({ ...prev, email: '' }));
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const isValidEmail = (email: string) => emailRegex.test(email);
-    if (!isValidEmail(formData.email)) {
+    if (formData.email && !isValidEmail(formData.email)) {
       setFormErrors((prev) => ({ ...prev, email: 'Wrong email format' }));
     }
   };
 
-  const validatePassword = () => {
+  const handlePasswordValidation = () => {
     setFormErrors((prev) => ({ ...prev, password: '' }));
 
     if (!formData.password) {
       setFormErrors((prev) => ({ ...prev, password: 'Please fill password' }));
     }
   };
+
+  // Clear modal data on modal open
+  useEffect(() => {
+    if (isModalOpen) {
+      setLoginError('');
+      setFormData({ email: '', password: '' });
+      setFormErrors({ email: '', password: '' });
+    }
+  }, [isModalOpen]);
+
+  if (!isModalOpen) return null;
 
   return (
     <div className={styles.overlay}>
@@ -102,7 +120,7 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            onBlur={validateEmail}
+            onBlur={handleEmailValidation}
             required
             autoFocus
           />
@@ -114,7 +132,7 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            onBlur={validatePassword}
+            onBlur={handlePasswordValidation}
             required
           />
           <div className={styles.errorText}>{formErrors.password}</div>
@@ -132,12 +150,7 @@ export const LoginModal: FC<LoginModalProps> = ({ onClose, onLogin }) => {
               {loading ? (
                 <Loader size="32" />
               ) : (
-                <Button
-                  type="submit"
-                  disabled={
-                    !!formErrors.email || !!formErrors.password || loading
-                  }
-                >
+                <Button type="submit" disabled={isLoginButtonDisabled()}>
                   Login
                 </Button>
               )}

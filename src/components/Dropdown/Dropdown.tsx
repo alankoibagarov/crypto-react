@@ -18,6 +18,7 @@ export const Dropdown: FC<DropdownProps> = ({
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
+  // Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (

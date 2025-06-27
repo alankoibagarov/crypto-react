@@ -24,6 +24,12 @@ export const Transfer: FC = () => {
   const [currency, setCurrency] = useState('');
   const [refetchTimeout, setRefetchTimeout] = useState(0);
 
+  const availableCurrencies = fullAssetList.map((coin, index) => (
+    <option key={`${coin.id}-${index}`} value={coin.id}>
+      {coin.name} ({coin.symbol.toUpperCase()})
+    </option>
+  ));
+
   const { data, isSuccess, isFetching, isError, refetch } = useQuery<
     CryptoCoin[],
     Error
@@ -43,6 +49,7 @@ export const Transfer: FC = () => {
     setRefetchTimeout(REFETCH_TIMEOUT);
   };
 
+  // Setting timeout for refetch availability in case of error
   useEffect(() => {
     if (refetchTimeout === 0) return;
 
@@ -53,30 +60,28 @@ export const Transfer: FC = () => {
     return () => clearInterval(timer);
   }, [refetchTimeout]);
 
-  const availableCurrencies = fullAssetList.map((coin, index) => (
-    <option key={`${coin.id}-${index}`} value={coin.id}>
-      {coin.name} ({coin.symbol.toUpperCase()})
-    </option>
-  ));
-
+  // Set asset list to store if fetch is success
   useEffect(() => {
     if (isSuccess) {
       setFullAssetList([...fullAssetList, ...data]);
     }
   }, [isSuccess]);
 
+  // Show error toast if fetching failed
   useEffect(() => {
     if (isError) {
       toast.error('Error while fetching data');
     }
   }, [isError]);
 
+  // From amount cannot be negative
   useEffect(() => {
     if (Number(fromAmount) < 0) {
       setFromAmount(0);
     }
   }, [fromAmount]);
 
+  // Setting first currency as value in dropdown and setting exchange rate
   useEffect(() => {
     if (fullAssetList.length > 0) {
       if (!currency) setCurrency(fullAssetList[0].id);

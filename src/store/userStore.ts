@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import CryptoJS from 'crypto-js';
 
-interface User {
+export interface User {
   email: string;
   avatarUrl?: string;
 }

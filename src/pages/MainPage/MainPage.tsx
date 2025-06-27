@@ -16,6 +16,8 @@ const MainPage = () => {
   const user = useUserStore((state) => state.user);
   const toast = useToast();
 
+  const [page, setPage] = useState(1);
+
   const setLoading = useAssetStore((state) => state.setLoading);
   const assetList = useAssetStore((state) => state.assetList);
   const setAssetList = useAssetStore((state) => state.setAssetList);
@@ -29,18 +31,6 @@ const MainPage = () => {
     queryKey: ['cryptoCoins'],
     queryFn: () => fetchCryptoCoins(page),
   });
-
-  useEffect(() => {
-    if (isSuccess) {
-      setAssetList([...assetList, ...data]);
-    }
-  }, [isSuccess, data, setAssetList]);
-
-  useEffect(() => {
-    if (isError) {
-      toast.error('Error while fetching data');
-    }
-  }, [isError]);
 
   const columns: Column[] = [
     {
@@ -94,8 +84,7 @@ const MainPage = () => {
       }))
     : [];
 
-  const [page, setPage] = useState(1);
-  const showMore = async () => {
+  const fetchMoreItems = async () => {
     setLoading(true);
     await setPage(page + 1);
     await refetch();
@@ -112,6 +101,20 @@ const MainPage = () => {
     toast.success(`${actionText} button is clicked`);
   };
 
+  // Set asset list to store if fetching is success
+  useEffect(() => {
+    if (isSuccess) {
+      setAssetList([...assetList, ...data]);
+    }
+  }, [isSuccess, data, setAssetList]);
+
+  // Show error toast if fetching failed
+  useEffect(() => {
+    if (isError) {
+      toast.error('Error while fetching data');
+    }
+  }, [isError]);
+
   return (
     <div className={styles.wrapper}>
       <h1 className={styles.title}>Home</h1>
@@ -120,7 +123,7 @@ const MainPage = () => {
         {isFetching ? (
           <Loader />
         ) : (
-          <Button onClick={showMore}>Show more</Button>
+          <Button onClick={fetchMoreItems}>Show more</Button>
         )}
       </div>
     </div>
