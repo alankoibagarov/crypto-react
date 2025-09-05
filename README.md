@@ -49,9 +49,9 @@ Unit tests are using Vitest and testing-library/react
 ```
 ---
 
-## Authorization
+## Authentication
 
-Authorization is currently done locally and has only one user:
+Authentication is currently done locally and has only one user:
 Login: admin@crypto.com
 Password: 123456
 
@@ -156,4 +156,5 @@ src/
 This project is licensed under the MIT License.
 
 © 2025 Alan Koibagarov. You are free to use, modify, and distribute this project under the terms of the MIT license.
+
 
