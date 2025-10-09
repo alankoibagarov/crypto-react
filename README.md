@@ -112,6 +112,7 @@ use npm run <script>
 
 ## Project folder structure
 
+
 ```
 src/
 ├── components/       # Reusable components, that be implemented on pages
