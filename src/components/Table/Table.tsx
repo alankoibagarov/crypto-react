@@ -79,7 +79,7 @@ export const Table = ({
     <table className={styles.table}>
       <colgroup>
         {columns.map((column) => (
-          <col style={{ width: column.width }} />
+          <col style={{ width: column.width }} key={column.key} />
         ))}
       </colgroup>
       <thead>
