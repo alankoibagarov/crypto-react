@@ -76,8 +76,8 @@ use npm run <script>
 
 ## Environment variables
 
-#### VITE_ENCRYPTION_KEY - used for encryption of user data
-#### VITE_CRYPTO_API_KEY - API key for Coingecko
+#### VITE_ENCRYPTION_KEY - used for encryption of user data (use 32-byte key)
+#### VITE_CRYPTO_API_KEY - API key for [Coingecko](https://www.coingecko.com/). You can generate a free demo key to access API.
 #### VITE_CRYPTO_API_LINK - link to crypto API
 ---
 
