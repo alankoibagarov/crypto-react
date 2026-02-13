@@ -17,6 +17,28 @@ import {
   TABLE_ACTIONS_WIDTH,
   PRICE_MAX_FRACTION_DIGITS,
 } from '@/const';
+import { NoCoin } from '@components/Icons/NoCoin';
+
+// Preload all crypto icons from assets/crypto using Vite's import.meta.glob
+const cryptoIcons = import.meta.glob('../../assets/crypto/*.png', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+}) as Record<string, string>;
+const NO_ICON_SRC = <NoCoin className={styles.icon} />;
+const getCryptoIconSrc = (symbol: string | undefined | null) => {
+  // If there is no symbol at all, use the "no icon" themed fallback
+  if (!symbol) {
+    return NO_ICON_SRC;
+  }
+  const key = `../../assets/crypto/${symbol.toLowerCase()}.png`;
+  const icon = cryptoIcons[key] ? (
+    <img src={cryptoIcons[key]} alt={symbol} />
+  ) : (
+    NO_ICON_SRC
+  );
+  return icon;
+};
 
 const MainPage = () => {
   const user = useUserStore((state) => state.user);
@@ -43,9 +65,7 @@ const MainPage = () => {
       name: 'Icon',
       key: 'image',
       width: TABLE_ICON_WIDTH,
-      renderCell: (_, row) => (
-        <img className={styles.icon} src={String(row.image)} alt="Icon" />
-      ),
+      renderCell: (_, row) => getCryptoIconSrc(String(row.symbol)),
     },
     {
       name: 'Name',
